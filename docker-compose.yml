@@ -46,3 +46,10 @@ services:
     volumes:
       - ./:/var/www/html
     working_dir: /var/www/html
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8767:8080
+    depends_on:
+    - mysql

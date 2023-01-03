@@ -1,5 +1,7 @@
 <?php
 
+
+
   // get route from the global variable $_SERVER
   $path = $_SERVER["REQUEST_URI"];
 

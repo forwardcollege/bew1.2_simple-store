@@ -46,6 +46,9 @@ class Authentication
                     'email' => $user['email']
                 ];
 
+                // remove the csrf token from the session data
+                unset( $_SESSION['login_form_csrf_token'] );
+
                 // redirect user back to index
                 header('Location: /');
                 exit;

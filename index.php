@@ -1,7 +1,5 @@
 <?php
 
-
-
   // get route from the global variable $_SERVER
   $path = $_SERVER["REQUEST_URI"];
 
@@ -25,6 +23,9 @@
       break;
     case 'orders':
       require "pages/orders.php";
+      break;
+    case 'checkout':
+      require "pages/checkout.php";
       break;
     case 'logout':
       require "pages/logout.php";

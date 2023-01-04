@@ -85,4 +85,12 @@ class Cart
             unset( $_SESSION['cart'][$product_id] );
         }
     }
+
+    /**
+     * Empty the cart
+     */
+    public function emptyCart()
+    {
+        unset( $_SESSION['cart'] );
+    }
 }

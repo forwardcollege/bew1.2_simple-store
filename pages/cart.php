@@ -52,48 +52,63 @@
                         </tr>
                     </thead>
                     <tbody>
-                    <?php foreach( $cart->listAllProductsinCart() as $product ) : ?>
+                    <!-- if no products in the cart -->
+                    <?php if ( empty( $cart->listAllProductsinCart() ) ) : ?>
                         <tr>
-                            <td><?php echo $product['name']; ?></td>
-                            <td>$<?php echo $product['price']; ?></td>
-                            <td><?php echo $product['quantity']; ?></td>
-                            <td>$<?php echo $product['total']; ?></td>
-                            <td>
-                                <form
-                                    method="POST"
-                                    action="<?php echo $_SERVER["REQUEST_URI"]; ?>"
-                                    >
-                                    <!-- specify the action as remove -->
-                                    <input 
-                                        type="hidden" 
-                                        name="action" 
-                                        value="remove" />
-                                    <!-- remove the selected product from cart -->
-                                    <input 
-                                        type="hidden"
-                                        name="product_id"
-                                        value="<?php echo $product['id']; ?>"
-                                        />
-                                    <button class="btn btn-danger btn-sm">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
+                            <td colspan="5">Your cart is empty.</td>
                         </tr>
-                    <?php endforeach; ?>
+                    <?php else : ?>
+                        <?php foreach( $cart->listAllProductsinCart() as $product ) : ?>
+                            <tr>
+                                <td><?php echo $product['name']; ?></td>
+                                <td>$<?php echo $product['price']; ?></td>
+                                <td><?php echo $product['quantity']; ?></td>
+                                <td>$<?php echo $product['total']; ?></td>
+                                <td>
+                                    <form
+                                        method="POST"
+                                        action="<?php echo $_SERVER["REQUEST_URI"]; ?>"
+                                        >
+                                        <!-- specify the action as remove -->
+                                        <input 
+                                            type="hidden" 
+                                            name="action" 
+                                            value="remove" />
+                                        <!-- remove the selected product from cart -->
+                                        <input 
+                                            type="hidden"
+                                            name="product_id"
+                                            value="<?php echo $product['id']; ?>"
+                                            />
+                                        <button class="btn btn-danger btn-sm">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
                         <tr>
                             <td colspan="3" class="text-end">Total</td>
                             <td>$<?php echo $cart->total(); ?></td>
                             <td></td>
                         </tr>
+                    <?php endif; // end - empty( $cart->listAllProductsinCart() ) ?>
                     </tbody>
                 </table>
-
+                
                 <div class="d-flex justify-content-between align-items-center my-3">
                     <a href="/" class="btn btn-light btn-sm">Continue Shopping</a>
-                    <button class="btn btn-primary">Checkout</a>
+                    <!-- if there is product in cart, then only display the checkout button -->
+                    <?php if ( !empty( $cart->listAllProductsinCart() ) ) : ?>
+                        <form
+                            method="POST"
+                            action="/checkout"
+                            >
+                            <button class="btn btn-primary">Checkout</a>
+                        </form>
+                    <?php endif; ?>
                 </div>
-
+                
             </div>
 
             <!-- footer -->

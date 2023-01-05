@@ -27,6 +27,9 @@
     case 'checkout':
       require "pages/checkout.php";
       break;
+    case 'payment-verification':
+      require "pages/payment-verification.php";
+      break;
     case 'logout':
       require "pages/logout.php";
       break;

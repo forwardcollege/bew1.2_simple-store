@@ -67,8 +67,10 @@ class Orders
                 'email' => $_SESSION['user']['email'],
                 'name' => $_SESSION['user']['email'],
                 'amount' => $total_amount * 100,
+                // 'callback_url' => 'http://simple-store.local/payment-callback',
                 'callback_url' => 'https://nathanonn-friendly-xylophone-54jpgqv6pq3p6wg-8765.preview.app.github.dev/payment-callback',
                 'description' => 'Order #' . $order_id, // Order #3,
+                // 'redirect_url' => 'http://simple-store.local/payment-callback',
                 'redirect_url' => 'https://nathanonn-friendly-xylophone-54jpgqv6pq3p6wg-8765.preview.app.github.dev/payment-verification'
             ],
             [
@@ -98,12 +100,32 @@ class Orders
     }
 
     /**
+     * Update order
+     */
+    public function updateOrder( $transaction_id, $status )
+    {
+        // update the order status using billplz id that stored as transaction_id in our database
+        $statement = $this->database->prepare(
+            'UPDATE orders SET status = :status WHERE transaction_id = :transaction_id'
+        );
+
+        $statement->execute([
+            'status' => $status,
+            'transaction_id' => $transaction_id
+        ]);
+    }
+
+    /**
      * List all the orders by the logged-in user
      */
     public function listOrders( $user_id )
     {
         // retrieve the orders data from database based on the given user_id
-        $statement = $this->database->prepare('SELECT * FROM orders WHERE user_id = :user_id');
+        $statement = $this->database->prepare(
+            'SELECT * FROM orders 
+            WHERE user_id = :user_id 
+            ORDER BY id DESC'
+        );
         $statement->execute([
             'user_id' => $user_id
         ]);

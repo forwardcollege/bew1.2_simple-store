@@ -1,15 +1,11 @@
 <?php
 
-    session_start();
+    $db = new DB();
 
-    require "includes/functions.php";
-    require "includes/class-products.php";
-
-    // call the Products class
-    $products = new Products();
-
-    // list out the products
-    $products_list = $products->listAllProducts();
+    // get all products
+    $products_list = $db->fetchAll(
+        "SELECT * FROM products"
+    );
 
     // require the header part
     require "parts/header.php";
@@ -38,19 +34,21 @@
               <div class="card-body text-center">
                 <h5 class="card-title"><?php echo $product['name']; ?></h5>
                 <p class="card-text">$<?php echo $product['price']; ?></p>
+                <?php if ( isUserLoggedIn() ) : ?>
                 <!-- when button is clicked, user will go to cart page -->
                 <form
-                  method="POST"
-                  action="/cart"
-                  >
-                  <!-- product id will pass to the cart page -->
-                  <input 
-                      type="hidden"
-                      name="product_id"
-                      value="<?php echo $product['id']; ?>"
+                    method="POST"
+                    action="/products/add_to_cart"
+                    >
+                    <!-- product id will pass to the cart page -->
+                    <input 
+                        type="hidden"
+                        name="product_id"
+                        value="<?php echo $product['id']; ?>"
                     />
-                  <button class="btn btn-primary">Add to cart</button>
+                    <button class="btn btn-primary">Add to cart</button>
                 </form>
+                <?php endif; ?>
               </div>
             </div>
           </div>
@@ -65,7 +63,7 @@
           © 2022 <a href="/" class="text-muted">My Store</a>
         </div>
         <div class="d-flex align-items-center gap-3">
-        <?php if ( isLoggedIn() ) : ?>
+        <?php if ( isUserLoggedIn() ) : ?>
           <a href="/orders" class="btn btn-light btn-sm">My Orders</a>
           <a href="/logout" class="btn btn-light btn-sm">Logout</a>
         <?php else : ?>

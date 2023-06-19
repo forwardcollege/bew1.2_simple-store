@@ -1,22 +1,5 @@
 <?php
 
-    session_start();
-
-    require "includes/functions.php";
-    require "includes/class-orders.php";
-
-    $orders = new Orders();
-
-    // make sure user already logged in
-    if ( !isLoggedIn() ) {
-        // if user not logged in, redirect to login page
-        header('Location: /login');
-        exit;
-    }
-
-    $user_id = $_SESSION['user']['id'];
-
-    // var_dump( $orders->listOrders( $user_id ) );
 
     // require the header part
     require "parts/header.php";
@@ -41,26 +24,32 @@
             </tr>
           </thead>
           <tbody>
-          <?php foreach( $orders->listOrders( $user_id ) as $order ) : ?>
+          <?php if ( isset( $orders ) ) : ?>
+            <?php foreach( $orders as $order ) : ?>
+                <tr>
+                <th scope="row"><?php echo $order['id']; ?></th>
+                <td>
+                    <ul class="list-unstyled">
+                    <?php foreach( 
+                    $orders->listProductsinOrder( $order['id'] )
+                    as $product
+                    ) : ?>
+                    <li>
+                        <?php echo $product['name']; ?> 
+                        (<?php echo $product['quantity']; ?>)
+                    </li>
+                    <?php endforeach; ?>
+                    </ul>
+                </td>
+                <td>$<?php echo $order['total_amount']; ?></td>
+                <td><?php echo $order['status']; ?></td>
+                </tr>
+            <?php endforeach; ?>
+          <?php else : ?>
             <tr>
-              <th scope="row"><?php echo $order['id']; ?></th>
-              <td>
-                <ul class="list-unstyled">
-                <?php foreach( 
-                  $orders->listProductsinOrder( $order['id'] )
-                  as $product
-                ) : ?>
-                  <li>
-                    <?php echo $product['name']; ?> 
-                    (<?php echo $product['quantity']; ?>)
-                  </li>
-                <?php endforeach; ?>
-                </ul>
-              </td>
-              <td>$<?php echo $order['total_amount']; ?></td>
-              <td><?php echo $order['status']; ?></td>
+              <td colspan="4">You have not placed any orders.</td>
             </tr>
-          <?php endforeach; ?>
+            <?php endif; ?>
           </tbody>
         </table>
 

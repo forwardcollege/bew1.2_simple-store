@@ -1,39 +1,6 @@
 <?php
 
-    session_start();
-
-    // !isset() = is not set
-    // if $_SESSION['login_form_csrf_token'] is not set, generate a new token
-    // when token is already available, we won't regenerate it again
-
-    if ( !isset( $_SESSION['login_form_csrf_token'] ) ) {
-      // generate csrf token
-      $_SESSION['login_form_csrf_token'] = bin2hex( random_bytes(32) );
-    }
-
-    require "includes/functions.php";
-    require "includes/class-authentication.php";
-
-    // process the login form
-    if ( $_SERVER["REQUEST_METHOD"] === 'POST' ) {
-
-      // verify the csrf token is correct or not
-      if ( $_POST['login_form_csrf_token'] !== $_SESSION['login_form_csrf_token'] )
-      {
-        die("Nice try! But I'm smarter than you!");
-      }
-
-      $email = $_POST["email"];
-      $password = $_POST["password"];
-
-      $auth = new Authentication();
-      $error = $auth->login(
-        $email,
-        $password
-      );
-
-    }
-
+    
     // require the header part
     require "parts/header.php";
 
@@ -49,37 +16,18 @@
             <?php 
               require "parts/error_box.php"
             ?>
-            <form 
-              action="<?php echo $_SERVER["REQUEST_URI"]; ?>" 
-              method="POST">
-              <div class="mb-3">
-                <label for="email" class="form-label">Email address</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="email"
-                  name="email"
-                />
-              </div>
-              <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="password"
-                  name="password"
-                />
-              </div>
-              <div class="d-grid">
-                <button type="submit" class="btn btn-primary btn-fu">
-                  Login
-                </button>
-              </div>
-              <input 
-                type="hidden"
-                name="login_form_csrf_token"
-                value="<?php echo $_SESSION['login_form_csrf_token']; ?>"
-                />
+            <form method="POST" action="auth/login">
+                <div class="mb-2">
+                    <label for="email">Email</label>
+                    <input type="text" class="form-control" id="email" name="email" placeholder="email@example.com">
+                </div>
+                <div class="mb-2">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
             </form>
           </div>
         </div>

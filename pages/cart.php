@@ -3,6 +3,7 @@
     $db = new DB();
 
     $products_in_cart = [];
+    $total_in_cart = 0;
 
     require 'parts/header.php';
 ?>
@@ -42,14 +43,8 @@
                                 <td>
                                     <form
                                         method="POST"
-                                        action="<?php echo $_SERVER["REQUEST_URI"]; ?>"
+                                        action="/products/remove_from_cart"
                                         >
-                                        <!-- specify the action as remove -->
-                                        <input 
-                                            type="hidden" 
-                                            name="action" 
-                                            value="remove" />
-                                        <!-- remove the selected product from cart -->
                                         <input 
                                             type="hidden"
                                             name="product_id"
@@ -64,7 +59,7 @@
                         <?php endforeach; ?>
                         <tr>
                             <td colspan="3" class="text-end">Total</td>
-                            <td>$<?php echo $cart->total(); ?></td>
+                            <td>$<?php echo $total_in_cart; ?></td>
                             <td></td>
                         </tr>
                     <?php endif; // end - empty( $products_in_cart ) ?>

@@ -46,7 +46,7 @@
                         name="product_id"
                         value="<?php echo $product['id']; ?>"
                     />
-                    <button class="btn btn-primary">Add to cart</button>
+                    <button type="submit" class="btn btn-primary">Add to cart</button>
                 </form>
                 <?php endif; ?>
               </div>

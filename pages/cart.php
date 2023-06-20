@@ -1,8 +1,23 @@
 <?php
 
+    // call db class
     $db = new DB();
 
-    $products_in_cart = [];
+    // get the cart from the database based on the current logged in user
+    $products_in_cart = $db->fetchAll(
+        "SELECT 
+            cart.*,
+            products.name,
+            products.price 
+        FROM cart
+        JOIN products
+        ON cart.product_id = products.id
+        WHERE user_id = :user_id AND order_id IS NULL",
+        [
+            'user_id' => $_SESSION['user']['id']
+        ]
+    );
+
     $total_in_cart = 0;
 
     require 'parts/header.php';
@@ -34,12 +49,17 @@
                             <td colspan="5">Your cart is empty.</td>
                         </tr>
                     <?php else : ?>
-                        <?php foreach( $products_in_cart as $product ) : ?>
+                        <?php foreach( $products_in_cart as $product ) : 
+                            // get the total price of the product
+                            $product_total =  $product['price'] * $product['quantity'];
+                            // add the total price to the total in cart
+                            $total_in_cart += $product_total;
+                            ?>
                             <tr>
                                 <td><?php echo $product['name']; ?></td>
                                 <td>$<?php echo $product['price']; ?></td>
                                 <td><?php echo $product['quantity']; ?></td>
-                                <td>$<?php echo $product['total']; ?></td>
+                                <td>$<?php echo $product_total; ?></td>
                                 <td>
                                     <form
                                         method="POST"
@@ -47,10 +67,10 @@
                                         >
                                         <input 
                                             type="hidden"
-                                            name="product_id"
+                                            name="cart_id"
                                             value="<?php echo $product['id']; ?>"
                                             />
-                                        <button class="btn btn-danger btn-sm">
+                                        <button type="submit" class="btn btn-danger btn-sm">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
@@ -74,7 +94,8 @@
                             method="POST"
                             action="/products/checkout"
                             >
-                            <button class="btn btn-primary">Checkout</a>
+                            <input type="hidden" name="total_amount" value="<?php echo $total_in_cart; ?>" />
+                            <button type="submit" class="btn btn-primary">Checkout</a>
                         </form>
                     <?php endif; ?>
                 </div>

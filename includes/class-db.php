@@ -51,4 +51,10 @@ class DB
         $query->execute($params);
         return $query->rowCount();
     }
+
+    // get the last inserted id from the database
+    public function lastInsertId()
+    {
+        return $this->db->lastInsertId();
+    }
 }

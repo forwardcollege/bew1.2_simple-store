@@ -1,5 +1,16 @@
 <?php
 
+    // call db class
+    $db = new DB();
+
+    // get orders from orders table
+    $orders = $db->fetchAll(
+        "SELECT * FROM orders
+        WHERE user_id = :user_id",
+        [
+            'user_id' => $_SESSION['user']['id']
+        ]
+    );
 
     // require the header part
     require "parts/header.php";
@@ -18,9 +29,9 @@
           <thead>
             <tr>
               <th scope="col">Order ID</th>
+              <th scope="col">Date</th>
               <th scope="col">Products</th>
               <th scope="col">Total Amount</th>
-              <th scope="col">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -28,21 +39,30 @@
             <?php foreach( $orders as $order ) : ?>
                 <tr>
                 <th scope="row"><?php echo $order['id']; ?></th>
+                <td><?php echo $order['added_on']; ?></td>
                 <td>
                     <ul class="list-unstyled">
-                    <?php foreach( 
-                    $orders->listProductsinOrder( $order['id'] )
-                    as $product
-                    ) : ?>
-                    <li>
-                        <?php echo $product['name']; ?> 
-                        (<?php echo $product['quantity']; ?>)
-                    </li>
-                    <?php endforeach; ?>
+                    <?php
+                        $products_in_cart = $db->fetchAll(
+                            "SELECT 
+                                cart.*,
+                                products.name,
+                                products.price 
+                            FROM cart
+                            JOIN products
+                            ON cart.product_id = products.id
+                            WHERE order_id = :order_id",
+                            [
+                                'order_id' => $order['id']
+                            ]
+                        );
+                        foreach( $products_in_cart as $product ) {
+                            echo "<li>{$product['name']} ({$product['quantity']})</li>";
+                        }
+                    ?>
                     </ul>
                 </td>
                 <td>$<?php echo $order['total_amount']; ?></td>
-                <td><?php echo $order['status']; ?></td>
                 </tr>
             <?php endforeach; ?>
           <?php else : ?>
